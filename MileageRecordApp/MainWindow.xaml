@@ -1,0 +1,174 @@
+﻿<Window x:Class="MileageRecordApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MileageRecordApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="800"
+        Closing="DataWindow_Closing" ResizeMode="NoResize">
+
+    <!--L T R B-->
+
+
+    <Border Padding="20">
+
+
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Top section of the application -->
+                <Grid Grid.Column="0" Margin="10 0 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Date Input -->
+                    <Grid Grid.Row="0" Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.75*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Date" FontWeight="Bold" Margin="0 2.5 0 0"/>
+                        <DatePicker x:Name="datePicker" Grid.Column="1" Margin="-50 0 150 0" />
+                    </Grid>
+
+
+                    <!-- Start and End Distance Input -->
+                    <Grid Grid.Row="1" Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Start" FontWeight="Bold" Margin="0 7.5 0 0"/>
+                        <TextBox x:Name="startDistanceTextBox" Padding="2" Grid.Column="1" Margin="0 5 0 0"/>
+                        <TextBlock Grid.Column="2" Text=" km" FontWeight="Bold" Margin="0 7.5 0 0"/>
+                        <TextBlock Grid.Column="3" Text="End" FontWeight="Bold" Margin="0 7.5 0 0"/>
+                        <TextBox x:Name="endDistanceTextBox" Padding="2" Grid.Column="4" Margin="0 5 0 0"/>
+                        <TextBlock Grid.Column="5" Text=" km" FontWeight="Bold" Margin="0 7.5 0 0"/>
+                    </Grid>
+
+                    <!-- Location Travelled -->
+                    <Grid Grid.Row="2" Margin="0 0 0 10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.75*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Location Travelled" FontWeight="Bold" Margin="0 7.5 0 0"/>
+                        <TextBox x:Name="locationTextBox" Padding="2" Grid.Column="1" Margin="0 5 0 0"/>
+                    </Grid>
+
+                    <!-- Buttons for Adding and Deleting Record-->
+                    <Grid Height="40" Grid.Row="3" Margin="0 0 50 20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="addButton"  Grid.Column="0" Content="Add" Height="40" Width="80" Click="addButton_Click"/>
+                        <Button x:Name="deleteButton"  Grid.Column="1" Content="Delete" Height="40" Width="80" Click="deleteButton_Click"/>
+                        <Button x:Name="saveRefresh"  Grid.Column="2" Height="40" Width="80" Click="refresh_Click">
+                            <Button.Content>
+                                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Save and Refresh" />
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+                </Grid>
+
+
+                <Grid Grid.Column="1">
+                    <TextBlock Text="Total Distance Travelled (km): " Margin="100,0,0,10" VerticalAlignment="Bottom"/>
+                </Grid>
+                
+            </Grid>
+            
+
+
+
+
+            <!-- Table to showcase the data -->
+            <DataGrid x:Name="mileageRecordTable"  CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" Margin="10 0 10 0" Height="350">
+                <DataGrid.Columns >
+                    <DataGridTextColumn IsReadOnly="true" Header="Date" Binding="{Binding date, StringFormat='dd/MM/yyyy'}" Width="0.5*"/>
+                    <DataGridTextColumn IsReadOnly="true" Header="Day" Binding="{Binding day}" Width="0.5*"/>
+                    <DataGridTextColumn IsReadOnly="true" Header="Start(km)" Binding="{Binding startDistance}" Width="0.75*"/>
+                    <DataGridTextColumn IsReadOnly="true" Header="End(km)" Binding="{Binding endDistance}" Width="0.75*"/>
+                    <DataGridTextColumn IsReadOnly="true" Header="Total(km)" Binding="{Binding totalDistance}" Width="0.75*"/>
+                    <DataGridTextColumn IsReadOnly="true" Header="Location Travelled" Binding="{Binding locationTravelled}" Width="*"/>
+                    <DataGridTextColumn IsReadOnly="false" Header="Remark" Binding="{Binding locationTravelled}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+
+
+            <!-- Save and End of month Button -->
+            <Grid Margin="10 30 0 0" Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width ="0.25*"/>
+                    <ColumnDefinition Width ="1*"/>
+                    <ColumnDefinition Width ="0.5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Month" FontWeight="Bold" Grid.Row="0"/>
+                    <TextBlock Text="Name" FontWeight="Bold" Grid.Row="1"/>
+                    <TextBlock Text="Vehicle No" FontWeight="Bold"  Grid.Row="2"/>
+                </Grid>
+
+                <Grid Grid.Column="1" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ComboBox Margin="0 -2.5 0 12.5">
+                        <ComboBoxItem IsSelected="True"> All </ComboBoxItem>
+                        <ComboBoxItem> January </ComboBoxItem>
+                        <ComboBoxItem> February </ComboBoxItem>
+                        <ComboBoxItem> March </ComboBoxItem>
+                        <ComboBoxItem> April </ComboBoxItem>
+                        <ComboBoxItem> May </ComboBoxItem>
+                        <ComboBoxItem> June </ComboBoxItem>
+                        <ComboBoxItem> July </ComboBoxItem>
+                        <ComboBoxItem> August </ComboBoxItem>
+                        <ComboBoxItem> September </ComboBoxItem>
+                        <ComboBoxItem> October </ComboBoxItem>
+                        <ComboBoxItem> November </ComboBoxItem>
+                        <ComboBoxItem> December </ComboBoxItem>
+                    </ComboBox>
+                    <TextBox x:Name="nameTextBox" Grid.Row="1" Width="200" Padding="2" Margin="0 -2.5 0 12.5"/>
+                    <TextBox x:Name="vehicleNumberTextBox" Grid.Row="2" Width="200" Padding="2" Margin="0 -2.5 0 12.5"/>
+                </Grid>
+
+                <Button x:Name="submitButton" Margin="15,0,0,0" Grid.Column="2" Height="40" Width="100" Click="submitButton_Click">
+                    <Button.Content>
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="End of Month Submission" />
+                    </Button.Content>
+                </Button>
+
+            </Grid>
+
+        </StackPanel>
+
+
+    </Border>
+
+</Window>
