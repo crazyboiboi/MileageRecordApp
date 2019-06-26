@@ -97,7 +97,6 @@ namespace MileageRecordApp
                     fileModified = true;
                 } else
                 {
-                    Console.WriteLine("Error");
                     displayMessageBox("Error", "Invalid input!", "Error");
                 }
 
