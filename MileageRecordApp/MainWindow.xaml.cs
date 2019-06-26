@@ -36,11 +36,10 @@ namespace MileageRecordApp
         private Regex distanceRegex = new Regex(@"^[0-9]+$");
         private Regex locationRegex = new Regex(@"^[A-z][A-z0-9,\/\. ]+$");
 
-
         public MainWindow()
         {
             InitializeComponent();
-
+            
             //Load records from file
             loadRecords();
             mileageRecordTable.ItemsSource = records;
@@ -98,6 +97,7 @@ namespace MileageRecordApp
                     fileModified = true;
                 } else
                 {
+                    Console.WriteLine("Error");
                     displayMessageBox("Error", "Invalid input!", "Error");
                 }
 
