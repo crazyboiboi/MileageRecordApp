@@ -36,6 +36,8 @@ namespace MileageRecordApp
         private Regex distanceRegex = new Regex(@"^[0-9]+$");
         private Regex locationRegex = new Regex(@"^[A-z][A-z0-9,\/\. ]+$");
 
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,6 +46,8 @@ namespace MileageRecordApp
             loadRecords();
             mileageRecordTable.ItemsSource = records;
         }
+
+
 
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -111,13 +115,21 @@ namespace MileageRecordApp
         private void deleteButton_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Delete button clicked");
-           if(mileageRecordTable.SelectedItem != null)
+            int recordCount = mileageRecordTable.Items.Count-1;
+
+            if (mileageRecordTable.SelectedItem != null)
             {
                 int index = mileageRecordTable.SelectedIndex;
-                records.RemoveAt(index);
-                mileageRecordTable.ItemsSource = records;
-                mileageRecordTable.Items.Refresh();
-                fileModified = true;
+                if(recordCount != 0 && index < recordCount)
+                {
+                    records.RemoveAt(index);
+                    mileageRecordTable.ItemsSource = records;
+                    mileageRecordTable.Items.Refresh();
+                    fileModified = true;
+                } else
+                {
+                    Console.WriteLine("Index greater than record count or zero!!");
+                }      
             }
         }
 
