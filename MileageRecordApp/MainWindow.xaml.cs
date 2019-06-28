@@ -22,11 +22,10 @@ namespace MileageRecordApp
     ///     
     public partial class MainWindow : Window
     {
-        //todo: create a new list for displaying the table record **IF REQUIRED OTHERWISE USE EXISTING LIST AND FILTER
-        //todo: use the existing list for all records
         //todo: remark section (allow edit and update the list)
-        //todo: total distance travelled calculation (updates based on the list in the current record 
+        //todo: total distance travelled calculation (updates based on the list in the current record)
         //todo: update PDF so it only prints out the list for the given records in the datagrids
+        //todo: implement private id property for each record depending on month and sequence added
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
         private ObservableCollection<Record> monthlyRecords = new ObservableCollection<Record>();
