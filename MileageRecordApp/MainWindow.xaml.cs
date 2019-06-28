@@ -12,6 +12,7 @@ using iText.Kernel.Geom;
 using Path = System.IO.Path;
 using iText.Layout.Properties;
 using iText.Kernel.Colors;
+using System.Windows.Controls;
 
 namespace MileageRecordApp
 {
@@ -24,11 +25,11 @@ namespace MileageRecordApp
         //todo: create a new list for displaying the table record **IF REQUIRED OTHERWISE USE EXISTING LIST AND FILTER
         //todo: use the existing list for all records
         //todo: remark section (allow edit and update the list)
-        //todo: total distance travelled calculation (updates based on the list in the current record
+        //todo: total distance travelled calculation (updates based on the list in the current record 
         //todo: update PDF so it only prints out the list for the given records in the datagrids
-        //todo: when combobox value change, filter data in datagrid
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
+        private ObservableCollection<Record> monthlyRecords = new ObservableCollection<Record>();
         private string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         //private string fileName = "mileageRecordFile.txt";
         private bool fileModified = false;
@@ -43,7 +44,7 @@ namespace MileageRecordApp
             
             //Load records from file
             loadRecords();
-            mileageRecordTable.ItemsSource = records;
+            mileageRecordTable.ItemsSource = records; //
         }
 
 
@@ -92,8 +93,8 @@ namespace MileageRecordApp
                     record.totalDistance = record.endDistance - record.startDistance;
                     record.locationTravelled = locationTextBox.Text; //
 
-                    records.Add(record);
-                    mileageRecordTable.ItemsSource = records;
+                    records.Add(record); 
+                    mileageRecordTable.ItemsSource = records; // 
 
                     //Reset all the input fields to blank/empty
                     resetInputFields("Record");
@@ -121,7 +122,7 @@ namespace MileageRecordApp
                 int index = mileageRecordTable.SelectedIndex;
                 if(recordCount != 0 && index < recordCount)
                 {
-                    records.RemoveAt(index);
+                    records.RemoveAt(index); //
                     mileageRecordTable.ItemsSource = records;
                     mileageRecordTable.Items.Refresh();
                     fileModified = true;
@@ -160,8 +161,31 @@ namespace MileageRecordApp
             }
         }
 
+        //Change datagrid content depending on the combobox item selected
+        private void MonthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            monthlyRecords.Clear();
+            Console.WriteLine(monthlyRecords.Count);
+            int indexSelected = monthComboBox.SelectedIndex;
 
-
+            if (indexSelected == 0)
+            {
+                mileageRecordTable.ItemsSource = records;
+                mileageRecordTable.Items.Refresh();
+            }
+            else
+            {
+                foreach (Record r in records)
+                {
+                    if (r.date.Month == indexSelected)
+                    {
+                        monthlyRecords.Add(r);
+                    }
+                }
+                mileageRecordTable.ItemsSource = monthlyRecords;
+                mileageRecordTable.Items.Refresh();
+            }
+        }
 
 
 
@@ -187,6 +211,7 @@ namespace MileageRecordApp
                 startDistanceTextBox.Text = "";
                 endDistanceTextBox.Text = "";
                 locationTextBox.Text = "";
+                monthComboBox.SelectedIndex = 0;
             } else if (type.Equals("PDF"))
             {
                 nameTextBox.Text = "";
@@ -335,6 +360,7 @@ namespace MileageRecordApp
 
             return p;
         }
+
         
     }
 }
