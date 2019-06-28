@@ -139,7 +139,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ComboBox Margin="0 -2.5 0 12.5">
+                    <ComboBox x:Name="monthComboBox" Margin="0 -2.5 0 12.5">
                         <ComboBoxItem IsSelected="True"> All </ComboBoxItem>
                         <ComboBoxItem> January </ComboBoxItem>
                         <ComboBoxItem> February </ComboBoxItem>

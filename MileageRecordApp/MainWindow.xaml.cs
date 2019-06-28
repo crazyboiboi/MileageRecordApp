@@ -26,8 +26,7 @@ namespace MileageRecordApp
         //todo: remark section (allow edit and update the list)
         //todo: total distance travelled calculation (updates based on the list in the current record
         //todo: update PDF so it only prints out the list for the given records in the datagrids
-        //todo: obtain month from the combobox
-
+        //todo: when combobox value change, filter data in datagrid
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
         private string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -294,7 +293,7 @@ namespace MileageRecordApp
 
                     //Header information
                     doc.Add(createParagraphWithTab("Name ", nameTextBox.Text));
-                    //doc.Add(createParagraphWithTab("Month ", monthTextBox.Text));
+                    doc.Add(createParagraphWithTab("Month ", monthComboBox.Text));
                     doc.Add(createParagraphWithTab("Vehicle Number ", vehicleNumberTextBox.Text));
 
                     doc.Add(new Paragraph());
