@@ -20,6 +20,7 @@ namespace MileageRecordApp
 
         public string locationTravelled { get; set; }
 
+        public string remark { get; set; }
 
         public override string ToString()
         {

@@ -107,7 +107,7 @@
                     <DataGridTextColumn IsReadOnly="true" Header="End(km)" Binding="{Binding endDistance}" Width="0.75*"/>
                     <DataGridTextColumn IsReadOnly="true" Header="Total(km)" Binding="{Binding totalDistance}" Width="0.75*"/>
                     <DataGridTextColumn IsReadOnly="true" Header="Location Travelled" Binding="{Binding locationTravelled}" Width="*"/>
-                    <DataGridTextColumn IsReadOnly="false" Header="Remark" Binding="{Binding locationTravelled}" Width="*"/>
+                    <DataGridTextColumn IsReadOnly="false" Header="Remark" Binding="{Binding remark}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
 
