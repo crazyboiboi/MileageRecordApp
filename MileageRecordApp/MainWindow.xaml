@@ -89,7 +89,7 @@
 
 
                 <Grid Grid.Column="1">
-                    <TextBlock Text="Total Distance Travelled (km): " Margin="100,0,0,10" VerticalAlignment="Bottom"/>
+                    <TextBlock x:Name="distanceTravelledTextBox" Text="Total Distance Travelled (km): " Margin="100,0,0,10" VerticalAlignment="Bottom"/>
                 </Grid>
                 
             </Grid>
@@ -99,7 +99,7 @@
 
 
             <!-- Table to showcase the data -->
-            <DataGrid x:Name="mileageRecordTable"  CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" Margin="10 0 10 0" Height="350">
+            <DataGrid x:Name="mileageRecordTable"  CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" Margin="10 0 10 0" Height="350">
                 <DataGrid.Columns >
                     <DataGridTextColumn IsReadOnly="true" Header="Date" Binding="{Binding date, StringFormat='dd/MM/yyyy'}" Width="0.5*"/>
                     <DataGridTextColumn IsReadOnly="true" Header="Day" Binding="{Binding day}" Width="0.5*"/>

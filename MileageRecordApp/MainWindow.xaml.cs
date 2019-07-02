@@ -23,17 +23,18 @@ namespace MileageRecordApp
     public partial class MainWindow : Window
     {
         //todo: remark section (allow edit and update the list)
-        //todo: total distance travelled calculation (updates based on the list in the current record)
-        //todo: update PDF so it only prints out the list for the given records in the datagrids
-        //todo: implement private id property for each record depending on month and sequence added
+
+
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
-        private ObservableCollection<Record> monthlyRecords = new ObservableCollection<Record>();
+        private ObservableCollection<Record> displayedRecords = new ObservableCollection<Record>();
         private string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         //private string fileName = "mileageRecordFile.txt";
         private bool fileModified = false;
         private Regex distanceRegex = new Regex(@"^[0-9]+$");
         private Regex locationRegex = new Regex(@"^[A-z][A-z0-9,\/\. ]+$");
+
+        private uint totalDistanceTravelled;
 
 
 
@@ -43,7 +44,7 @@ namespace MileageRecordApp
             
             //Load records from file
             loadRecords();
-            mileageRecordTable.ItemsSource = records; //
+            mileageRecordTable.ItemsSource = records; 
         }
 
 
@@ -56,12 +57,12 @@ namespace MileageRecordApp
             //Else do nothing
             if(fileModified)
             {
-                MessageBoxResult result =
-                MessageBox.Show(
-                "Closing app without saving?",
-                "Data App",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show(
+                    "Closing app without saving?",
+                    "Data App",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
                 if (result == MessageBoxResult.No)
                 {
                     // If user doesn't want to close, cancel closure
@@ -87,13 +88,17 @@ namespace MileageRecordApp
                     Record record = new Record();
                     record.date = datePicker.SelectedDate.Value.Date;
                     record.day = datePicker.SelectedDate.Value.DayOfWeek.ToString();
-                    record.startDistance = Convert.ToUInt32(startDistanceTextBox.Text); //
-                    record.endDistance = Convert.ToUInt32(endDistanceTextBox.Text); // 
+                    record.startDistance = Convert.ToUInt32(startDistanceTextBox.Text); 
+                    record.endDistance = Convert.ToUInt32(endDistanceTextBox.Text); 
                     record.totalDistance = record.endDistance - record.startDistance;
-                    record.locationTravelled = locationTextBox.Text; //
+                    record.locationTravelled = locationTextBox.Text;
+
+                    totalDistanceTravelled += record.totalDistance;
 
                     records.Add(record); 
-                    mileageRecordTable.ItemsSource = records; // 
+                    mileageRecordTable.ItemsSource = records;
+
+                    displayDistanceTravelled(totalDistanceTravelled);
 
                     //Reset all the input fields to blank/empty
                     resetInputFields("Record");
@@ -118,17 +123,30 @@ namespace MileageRecordApp
 
             if (mileageRecordTable.SelectedItem != null)
             {
-                int index = mileageRecordTable.SelectedIndex;
-                if(recordCount != 0 && index < recordCount)
+                try
                 {
-                    records.RemoveAt(index); //
+                    Record recordToBeDeleted = (Record)mileageRecordTable.SelectedItem;
+                    int index = records.IndexOf(recordToBeDeleted);
+
+                    totalDistanceTravelled -= recordToBeDeleted.totalDistance;
+
+                    records.RemoveAt(index);
+
                     mileageRecordTable.ItemsSource = records;
                     mileageRecordTable.Items.Refresh();
                     fileModified = true;
-                } else
+                    resetInputFields("Record");
+
+                    displayDistanceTravelled(totalDistanceTravelled);
+
+                } catch (InvalidCastException)
                 {
-                    Console.WriteLine("Index greater than record count or zero!!");
-                }      
+                    Console.WriteLine("Row is empty");
+                }
+
+            } else
+            {
+                Console.WriteLine("Failed to delete record!!");
             }
         }
 
@@ -139,9 +157,14 @@ namespace MileageRecordApp
             Console.WriteLine("Refresh button clicked");
 
             //Sorts the record according to date and updates the data table
-            sortRecords();
+            records = sortRecords(records);
             mileageRecordTable.ItemsSource = records;
+
+            resetInputFields("Record");
+
             saveRecords();
+
+            //Debug
             printCurrentRecordList();
         }
 
@@ -160,31 +183,42 @@ namespace MileageRecordApp
             }
         }
 
+
         //Change datagrid content depending on the combobox item selected
         private void MonthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            monthlyRecords.Clear();
-            Console.WriteLine(monthlyRecords.Count);
+            displayedRecords.Clear();
+
             int indexSelected = monthComboBox.SelectedIndex;
 
             if (indexSelected == 0)
             {
                 mileageRecordTable.ItemsSource = records;
                 mileageRecordTable.Items.Refresh();
+                displayDistanceTravelled(totalDistanceTravelled);
             }
             else
             {
+                uint distanceTravelledThisMonth=0;
                 foreach (Record r in records)
                 {
                     if (r.date.Month == indexSelected)
                     {
-                        monthlyRecords.Add(r);
+                        distanceTravelledThisMonth += r.totalDistance;
+                        displayedRecords.Add(r);
+
                     }
                 }
-                mileageRecordTable.ItemsSource = monthlyRecords;
+                displayDistanceTravelled(distanceTravelledThisMonth);
+                displayedRecords = sortRecords(displayedRecords);
+                mileageRecordTable.ItemsSource = displayedRecords;
                 mileageRecordTable.Items.Refresh();
             }
         }
+
+
+
+
 
 
 
@@ -198,6 +232,13 @@ namespace MileageRecordApp
             {
                 MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+
+        //Display distance travelled
+        private void displayDistanceTravelled (uint distanceTravelled)
+        {
+            distanceTravelledTextBox.Text = "Total Distance Travelled (km): " + distanceTravelled;
         }
 
 
@@ -240,13 +281,15 @@ namespace MileageRecordApp
         
 
         //Sort the record
-        private void sortRecords() {records = new ObservableCollection<Record>(records.OrderBy(r => r.date));}
+        private ObservableCollection<Record> sortRecords(ObservableCollection<Record> recordsToBeSorted)
+        {
+            return new ObservableCollection<Record>(recordsToBeSorted.OrderBy(r => r.date));
+        }
 
 
         //Save all records to textfile
         private void saveRecords()
         {
-            sortRecords();
             fileModified = false;
 
             using (StreamWriter sw = new StreamWriter(Path.Combine(desktopPath, "Sample.txt")))
@@ -334,7 +377,7 @@ namespace MileageRecordApp
                     table.AddCell(new Cell().Add(new Paragraph("Location Travelled")).SetBackgroundColor(ColorConstants.LIGHT_GRAY));
 
                     //Read all records from the list
-                    foreach (Record r in records)
+                    foreach (Record r in displayedRecords)
                     {
                         table.AddCell(new Cell().Add(new Paragraph(r.date.ToShortDateString())));
                         table.AddCell(new Cell().Add(new Paragraph(r.day)));
