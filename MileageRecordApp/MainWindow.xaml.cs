@@ -22,8 +22,8 @@ namespace MileageRecordApp
     ///     
     public partial class MainWindow : Window
     {
-        //todo: remark section (allow edit and update the list)
-
+        //todo: find a way to locate the Downloads folder (used for location of PDF)
+        //todo: make a year combobox and do the same thing as month
 
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
@@ -222,6 +222,10 @@ namespace MileageRecordApp
 
 
 
+
+
+
+
         //Message Box
         private void displayMessageBox (string type, string text, string title)
         {
@@ -294,6 +298,8 @@ namespace MileageRecordApp
 
             using (StreamWriter sw = new StreamWriter(Path.Combine(desktopPath, "Sample.txt")))
             {
+                sw.WriteLine(totalDistanceTravelled);
+
                 foreach (Record r in records)
                 {
                     sw.Write(r.date + ",");
@@ -301,7 +307,8 @@ namespace MileageRecordApp
                     sw.Write(r.startDistance + ",");
                     sw.Write(r.endDistance + ",");
                     sw.Write(r.totalDistance + ",");
-                    sw.WriteLine(r.locationTravelled);
+                    sw.Write(r.locationTravelled + ",");
+                    sw.WriteLine(r.remark);
                 }
             }
 
@@ -315,9 +322,13 @@ namespace MileageRecordApp
             try
             {
                 string[] lines = File.ReadAllLines(Path.Combine(desktopPath, "Sample.txt"));
-                foreach (string line in lines)
+
+                totalDistanceTravelled = Convert.ToUInt32(lines[0]);
+                displayDistanceTravelled(totalDistanceTravelled);
+
+                for (int i=1; i<lines.Length; i++)
                 {
-                    string[] col = line.Split(new char[] { ',' });
+                    string[] col = lines[i].Split(new char[] { ',' });
                     Record record = new Record
                     {
                         date = Convert.ToDateTime(col[0]),
@@ -325,7 +336,8 @@ namespace MileageRecordApp
                         startDistance = Convert.ToUInt32(col[2]),
                         endDistance = Convert.ToUInt32(col[3]),
                         totalDistance = Convert.ToUInt32(col[4]),
-                        locationTravelled = col[5]
+                        locationTravelled = col[5],
+                        remark = col[6]
                     };
 
                     records.Add(record);

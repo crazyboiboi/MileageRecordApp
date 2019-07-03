@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MileageRecordApp
 {
-    class Record : IComparable<Record>
+    class Record : IComparable<Record>, INotifyPropertyChanged
     {
         public DateTime date { get; set; } 
 
@@ -20,7 +21,36 @@ namespace MileageRecordApp
 
         public string locationTravelled { get; set; }
 
+        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged (string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
         public string remark { get; set; }
+
+        public string Remark
+        {
+            get
+            {
+                return remark;
+            }
+            set
+            {
+                if (value != remark)
+                {
+                    remark = value;
+                    NotifyPropertyChanged("Remark");
+                }
+            }
+        }
+
+
+
+
 
         public override string ToString()
         {
