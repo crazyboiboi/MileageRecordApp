@@ -174,9 +174,22 @@ namespace MileageRecordApp
         {
             if(nameTextBox.Text != "" || vehicleNumberTextBox.Text != "")
             {
-                createPdfReport(Path.Combine(desktopPath, "Sample.pdf"));
-                displayMessageBox("Information", "Report successfully created!", "");
-                resetInputFields("PDF");
+                Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+                sfd.FileName = "Sample.pdf";
+                sfd.DefaultExt = ".pdf";
+                sfd.Filter = "PDF documents (.pdf)|*.pdf";
+
+                Nullable<bool> result = sfd.ShowDialog();
+
+                if (result == true)
+                {
+                    string filename = sfd.FileName;
+                    string filePath = Path.GetFullPath(sfd.FileName);
+                    createPdfReport(Path.Combine(filePath, filename));
+                    displayMessageBox("Information", "Report successfully created!", "");
+                    resetInputFields("PDF");
+                }
+                
             } else
             {
                 displayMessageBox("Error", "Input fields cannot be left blanked!", "Error");
