@@ -13,6 +13,7 @@ using Path = System.IO.Path;
 using iText.Layout.Properties;
 using iText.Kernel.Colors;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace MileageRecordApp
 {
@@ -22,7 +23,6 @@ namespace MileageRecordApp
     ///     
     public partial class MainWindow : Window
     {
-        //todo: find a way to locate the Downloads folder (used for location of PDF)
         //todo: make a year combobox and do the same thing as month
 
 
@@ -36,6 +36,10 @@ namespace MileageRecordApp
 
         private uint totalDistanceTravelled;
 
+        private int yearIndex = 0;
+        private int monthIndex = 0;
+        private string year;
+        private string yearToFilter;
 
 
         public MainWindow()
@@ -44,7 +48,10 @@ namespace MileageRecordApp
             
             //Load records from file
             loadRecords();
-            mileageRecordTable.ItemsSource = records; 
+            mileageRecordTable.ItemsSource = records;
+
+            populateYearComboBox();
+
         }
 
 
@@ -179,7 +186,7 @@ namespace MileageRecordApp
                 sfd.DefaultExt = ".pdf";
                 sfd.Filter = "PDF documents (.pdf)|*.pdf";
 
-                Nullable<bool> result = sfd.ShowDialog();
+                bool? result = sfd.ShowDialog();
 
                 if (result == true)
                 {
@@ -200,38 +207,104 @@ namespace MileageRecordApp
         //Change datagrid content depending on the combobox item selected
         private void MonthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            monthIndex = monthComboBox.SelectedIndex;
+
+            filterData();
+        }
+
+        private void YearComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedComboItem = sender as ComboBox;
+            //yearIndex = yearComboBox.SelectedIndex;
+            //year = yearComboBox.Items[yearIndex].ToString();
+            year = selectedComboItem.SelectedItem.ToString();
+            filterData();
+        }
+
+
+        private void filterData ()
+        {
             displayedRecords.Clear();
+            ObservableCollection<Record> filteredRecords = new ObservableCollection<Record>();
+            uint distanceTravelled = 0;
 
-            int indexSelected = monthComboBox.SelectedIndex;
 
-            if (indexSelected == 0)
+            if (year != null)
             {
-                mileageRecordTable.ItemsSource = records;
-                mileageRecordTable.Items.Refresh();
-                displayDistanceTravelled(totalDistanceTravelled);
+                if (yearToFilter.Equals("All"))
+                {
+                    filteredRecords = records;
+                } else
+                {
+                    foreach (Record r in records)
+                    {
+                        if (r.date.Year.Equals(year))
+                        {
+                            filteredRecords.Add(r);
+                            distanceTravelled += r.totalDistance;
+                        }
+                    }
+                }
             }
             else
             {
-                uint distanceTravelledThisMonth=0;
+                Console.WriteLine("YearToFilter is null!!");
+            }
+
+
+
+
+            if(monthIndex == 0)
+            {
+                displayedRecords = filteredRecords;
+            } else
+            {
+                distanceTravelled = 0;
                 foreach (Record r in records)
                 {
-                    if (r.date.Month == indexSelected)
+                    if (r.date.Month == monthIndex)
                     {
-                        distanceTravelledThisMonth += r.totalDistance;
                         displayedRecords.Add(r);
-
+                        distanceTravelled += r.totalDistance;
                     }
                 }
-                displayDistanceTravelled(distanceTravelledThisMonth);
-                displayedRecords = sortRecords(displayedRecords);
-                mileageRecordTable.ItemsSource = displayedRecords;
-                mileageRecordTable.Items.Refresh();
             }
+
+            displayDistanceTravelled(distanceTravelled);
+            displayedRecords = sortRecords(displayedRecords);
+            mileageRecordTable.ItemsSource = displayedRecords;
+            mileageRecordTable.Items.Refresh();
         }
 
 
 
 
+
+
+
+
+
+        private void populateYearComboBox()
+        {
+            int minYear = records[0].date.Year;
+            int maxYear = records[records.Count-1].date.Year;
+
+            int steps = maxYear - minYear;
+
+            List<string> years = new List<string>();
+
+            years.Add("All");
+
+            for (int i=0; i<=steps; i++)
+            {
+                int yearToAdd = minYear + i;
+                years.Add(yearToAdd.ToString());
+                //yearComboBox.Items.Add(minYear + i);
+            }
+
+            yearComboBox.ItemsSource = years;
+
+        }
 
 
 
@@ -245,7 +318,7 @@ namespace MileageRecordApp
             if(type.Equals("Error"))
             {
                 MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
-            } else if (type.Equals("Information"))
+            } else if(type.Equals("Information"))
             {
                 MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -295,7 +368,7 @@ namespace MileageRecordApp
                 distanceRegex.IsMatch(endDistanceTextBox.Text) &&
                 locationRegex.IsMatch(locationTextBox.Text);
         }
-        
+
 
         //Sort the record
         private ObservableCollection<Record> sortRecords(ObservableCollection<Record> recordsToBeSorted)
@@ -324,9 +397,9 @@ namespace MileageRecordApp
                     sw.WriteLine(r.remark);
                 }
             }
-
             displayMessageBox("Information", "Saved successfully", "");
         }
+
 
 
         //Read all records from textfile and populate the list
@@ -382,7 +455,6 @@ namespace MileageRecordApp
                 using (var pdf = new PdfDocument(writer))
                 {
                     var doc = new Document(pdf, PageSize.A4);
-
                     //Header information
                     doc.Add(createParagraphWithTab("Name ", nameTextBox.Text));
                     doc.Add(createParagraphWithTab("Month ", monthComboBox.Text));
@@ -411,6 +483,9 @@ namespace MileageRecordApp
                         table.AddCell(new Cell().Add(new Paragraph(r.totalDistance.ToString())));
                         table.AddCell(new Cell().Add(new Paragraph(r.locationTravelled)));
                     }
+                    Console.WriteLine("I can run");
+
+
                     doc.Add(table);
                 }
             }

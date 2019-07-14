@@ -13,7 +13,6 @@
 
     <Border Padding="20">
 
-
         <StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -99,7 +98,7 @@
 
 
             <!-- Table to showcase the data -->
-            <DataGrid x:Name="mileageRecordTable"  CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" Margin="10 0 10 0" Height="350">
+            <DataGrid x:Name="mileageRecordTable"  CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" Margin="10 0 10 0" Height="300">
                 <DataGrid.Columns >
                     <DataGridTextColumn IsReadOnly="true" Header="Date" Binding="{Binding date, StringFormat='dd/MM/yyyy'}" Width="0.5*"/>
                     <DataGridTextColumn IsReadOnly="true" Header="Day" Binding="{Binding day}" Width="0.5*"/>
@@ -121,7 +120,7 @@
 
 
             <!-- Save and End of month Button -->
-            <Grid Margin="10 30 0 0" Height="100">
+            <Grid Margin="10 30 0 0" Height="150">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width ="0.25*"/>
                     <ColumnDefinition Width ="1*"/>
@@ -133,10 +132,12 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="Month" FontWeight="Bold" Grid.Row="0"/>
-                    <TextBlock Text="Name" FontWeight="Bold" Grid.Row="1"/>
-                    <TextBlock Text="Vehicle No" FontWeight="Bold"  Grid.Row="2"/>
+                    <TextBlock Text="Year" FontWeight="Bold" Grid.Row="1"/>
+                    <TextBlock Text="Name" FontWeight="Bold" Grid.Row="2"/>
+                    <TextBlock Text="Vehicle No" FontWeight="Bold"  Grid.Row="3"/>
                 </Grid>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Left">
@@ -144,8 +145,9 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ComboBox x:Name="monthComboBox" Margin="0 -2.5 0 12.5" SelectionChanged="MonthComboBox_SelectionChanged">
+                    <ComboBox x:Name="monthComboBox" Margin="0 -2.5 0 15" SelectionChanged="MonthComboBox_SelectionChanged">
                         <ComboBoxItem IsSelected="True"> All </ComboBoxItem>
                         <ComboBoxItem> January </ComboBoxItem>
                         <ComboBoxItem> February </ComboBoxItem>
@@ -160,8 +162,9 @@
                         <ComboBoxItem> November </ComboBoxItem>
                         <ComboBoxItem> December </ComboBoxItem>
                     </ComboBox>
-                    <TextBox x:Name="nameTextBox" Grid.Row="1" Width="200" Padding="2" Margin="0 -2.5 0 12.5"/>
-                    <TextBox x:Name="vehicleNumberTextBox" Grid.Row="2" Width="200" Padding="2" Margin="0 -2.5 0 12.5"/>
+                    <ComboBox x:Name="yearComboBox" Grid.Row="1"  Margin="0 -2.5 0 15" SelectionChanged="YearComboBox_SelectionChanged"/>
+                    <TextBox x:Name="nameTextBox" Grid.Row="2" Width="200" Padding="2" Margin="0 -2.5 0 15"/>
+                    <TextBox x:Name="vehicleNumberTextBox" Grid.Row="3" Width="200" Padding="2" Margin="0 -2.5 0 15"/>
                 </Grid>
 
                 <Button x:Name="submitButton" Margin="15,0,0,0" Grid.Column="2" Height="40" Width="100" Click="submitButton_Click">
