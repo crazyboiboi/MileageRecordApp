@@ -167,6 +167,9 @@ namespace MileageRecordApp
             records = sortRecords(records);
             mileageRecordTable.ItemsSource = records;
 
+            //Refreshes year combobox items if record with new year has been added
+            populateYearComboBox();
+
             resetInputFields("Record");
 
             saveRecords();
@@ -204,14 +207,14 @@ namespace MileageRecordApp
         }
 
 
-        //Change datagrid content depending on the combobox item selected
+        //Change datagrid content depending on the combobox month item selected
         private void MonthComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             monthIndex = monthComboBox.SelectedIndex;
 
             filterData();
         }
-
+        //Change datagrid content depending on the combobox year item selected
         private void YearComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedComboItem = sender as ComboBox;
@@ -221,7 +224,7 @@ namespace MileageRecordApp
             filterData();
         }
 
-
+        //Filters records depending on items selected in month and year combobox
         private void filterData ()
         {
             displayedRecords.Clear();
@@ -231,16 +234,40 @@ namespace MileageRecordApp
 
             if (year != null)
             {
-                if (yearToFilter.Equals("All"))
+                if (year.Equals("All") && monthIndex == 0)
                 {
-                    filteredRecords = records;
-                } else
+                    displayedRecords = records;
+                } else if (year.Equals("All"))
                 {
+                    distanceTravelled = 0;
                     foreach (Record r in records)
                     {
-                        if (r.date.Year.Equals(year))
+                        if (r.date.Month == monthIndex)
                         {
-                            filteredRecords.Add(r);
+                            displayedRecords.Add(r);
+                            distanceTravelled += r.totalDistance;
+                        }
+                    }
+                } else if (monthIndex == 0)
+                {
+                    distanceTravelled = 0;
+                    foreach (Record r in records)
+                    {
+                        if (r.date.Year.ToString() == year)
+                        {
+                            displayedRecords.Add(r);
+                            distanceTravelled += r.totalDistance;
+                        }
+                    }
+                }
+                else
+                {
+                    distanceTravelled = 0;
+                    foreach (Record r in records)
+                    {
+                        if (r.date.Year.ToString() == year && r.date.Month == monthIndex)
+                        {
+                            displayedRecords.Add(r);
                             distanceTravelled += r.totalDistance;
                         }
                     }
@@ -251,24 +278,6 @@ namespace MileageRecordApp
                 Console.WriteLine("YearToFilter is null!!");
             }
 
-
-
-
-            if(monthIndex == 0)
-            {
-                displayedRecords = filteredRecords;
-            } else
-            {
-                distanceTravelled = 0;
-                foreach (Record r in records)
-                {
-                    if (r.date.Month == monthIndex)
-                    {
-                        displayedRecords.Add(r);
-                        distanceTravelled += r.totalDistance;
-                    }
-                }
-            }
 
             displayDistanceTravelled(distanceTravelled);
             displayedRecords = sortRecords(displayedRecords);
@@ -303,6 +312,7 @@ namespace MileageRecordApp
             }
 
             yearComboBox.ItemsSource = years;
+            yearComboBox.Items.Refresh();
 
         }
 
