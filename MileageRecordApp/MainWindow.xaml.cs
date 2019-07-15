@@ -23,7 +23,6 @@ namespace MileageRecordApp
     ///     
     public partial class MainWindow : Window
     {
-        //todo: make a year combobox and do the same thing as month
 
 
         private ObservableCollection<Record> records = new ObservableCollection<Record>();
@@ -36,10 +35,8 @@ namespace MileageRecordApp
 
         private uint totalDistanceTravelled;
 
-        private int yearIndex = 0;
         private int monthIndex = 0;
         private string year;
-        private string yearToFilter;
 
 
         public MainWindow()
@@ -218,8 +215,6 @@ namespace MileageRecordApp
         private void YearComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedComboItem = sender as ComboBox;
-            //yearIndex = yearComboBox.SelectedIndex;
-            //year = yearComboBox.Items[yearIndex].ToString();
             year = selectedComboItem.SelectedItem.ToString();
             filterData();
         }
